@@ -33,7 +33,7 @@ export default class NotesAPI {
 
     if (existing) {
       const index = notes.indexOf(existing);
-      console.log(index);
+      // console.log(index);
       notes.splice(index, 1);
       localStorage.setItem("NotesApp-notes", JSON.stringify(notes));
     } else {

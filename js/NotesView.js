@@ -12,16 +12,17 @@ export default class NotesView {
     this.root.innerHTML = `
     <div class="notes_sidebar">
         <ul class="nav nav-pills">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#"
-              >All notes</a
-            >
+          <li class="nav-item" data-type="all">
+            <a class="nav-link active "href="#">All notes</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">重要</a>
+          <li class="nav-item" data-type="todo">
+            <a class="nav-link" href="#">on the way</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">不重要</a>
+          <li class="nav-item" data-type="done">
+            <a class="nav-link" href="#">done</a>
+          </li>
+          <li class="nav-item" data-type="delete">
+            <a class="nav-link" href="#">gone</a>
           </li>
           <li class="nav-item">
             <button class="btn btn-success notes_Add" type="button">
@@ -29,7 +30,7 @@ export default class NotesView {
             </button>
           </li>
         </ul>
-
+        <input type="hidden" id="tabValue" value="all" />
         <div class="sidebar_content">
           <div class="card_list"></div>
         </div>
@@ -44,6 +45,35 @@ export default class NotesView {
     const btn_AddNote = this.root.querySelector(".notes_Add");
     const in_Title = this.root.querySelector(".notes_title");
     const in_Body = this.root.querySelector(".notes_body");
+    const filters = this.root.querySelectorAll(".nav-item");
+
+    filters.forEach((tab) => {
+      tab.addEventListener("click", function (e) {
+        e.preventDefault();
+        const tabType = this.getAttribute("data-type");
+        document.querySelectorAll(".nav-link").forEach((nav) => {
+          nav.classList.remove("active");
+        });
+        this.firstElementChild.classList.add("active");
+        // getItemsFilter(tabType);
+        document.querySelector("#tabValue").value = tabType;
+      });
+    });
+
+    // const getItemsFilter = function (type) {
+    //   let filtersItems = [];
+    //   switch (type) {
+    //     case "todo":
+    //       // filtersItems =
+    //       break;
+    //     case "done":
+    //       break;
+    //     case "delete":
+    //       break;
+    //     default:
+    //       break;
+    //   }
+    // };
 
     btn_AddNote.addEventListener("click", () => {
       this.onNoteAdd();
@@ -78,9 +108,10 @@ export default class NotesView {
                 timeStyle: "short",
               })}
           </div>
-          <select class="form-select w-25 selectorBox" aria-label="Default select example">
-            <option value="1">重要</option>
-            <option value="2">不重要</option>
+          <select class="form-select w-25 selectorBox">
+            <option selected>None</option>
+            <option value="processing">processing</option>
+            <option value="done">done</option>
           </select>
       </div>
   </div>
@@ -117,6 +148,31 @@ export default class NotesView {
   UpdateActiveNote(note) {
     this.root.querySelector(".notes_title").value = note.title;
     this.root.querySelector(".notes_body").value = note.body;
+
+    this.root.querySelectorAll(".form-select").forEach((select) => {
+      select.addEventListener("change", () => {
+        // console.log(select.parentElement.parentElement);
+        switch (select.value) {
+          case "processing":
+            // console.log("processing");
+            select.parentElement.parentElement.classList.remove("done");
+            select.parentElement.parentElement.classList.remove("none");
+            select.parentElement.parentElement.classList.add("processing");
+            break;
+          case "done":
+            // console.log("done");
+            select.parentElement.parentElement.classList.remove("processing");
+            select.parentElement.parentElement.classList.remove("none");
+            select.parentElement.parentElement.classList.add("done");
+            break;
+          default:
+            console.log("None");
+            break;
+        }
+      });
+    });
+
+    // selectBox.value = "done";
     // console.log(note.title);
     // console.log(this.root.querySelectorAll(".card_list"));
 
