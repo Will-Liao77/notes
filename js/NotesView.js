@@ -110,7 +110,7 @@ export default class NotesView {
           </div>
           <select class="form-select w-25 selectorBox">
             <option selected>None</option>
-            <option value="processing">processing</option>
+            <option value="todo">processing</option>
             <option value="done">done</option>
           </select>
       </div>
@@ -153,20 +153,21 @@ export default class NotesView {
       select.addEventListener("change", () => {
         // console.log(select.parentElement.parentElement);
         switch (select.value) {
-          case "processing":
+          case "todo":
             // console.log("processing");
             select.parentElement.parentElement.classList.remove("done");
             select.parentElement.parentElement.classList.remove("none");
-            select.parentElement.parentElement.classList.add("processing");
+            select.parentElement.parentElement.classList.add("todo");
             break;
           case "done":
             // console.log("done");
-            select.parentElement.parentElement.classList.remove("processing");
+            select.parentElement.parentElement.classList.remove("todo");
             select.parentElement.parentElement.classList.remove("none");
             select.parentElement.parentElement.classList.add("done");
             break;
           default:
-            console.log("None");
+            select.parentElement.parentElement.classList.remove("todo");
+            select.parentElement.parentElement.classList.remove("done");
             break;
         }
       });
