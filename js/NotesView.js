@@ -1,9 +1,13 @@
 export default class NotesView {
-  constructor(root, { onNoteSelect, onNoteAdd, onNoteEdit } = {}) {
+  constructor(
+    root,
+    { onNoteSelect, onNoteAdd, onNoteEdit, onNoteDelete } = {}
+  ) {
     this.root = root;
     this.onNoteSelect = onNoteSelect;
     this.onNoteAdd = onNoteAdd;
     this.onNoteEdit = onNoteEdit;
+    this.onNoteDelete = onNoteDelete;
 
     this.root.innerHTML = `
     <div class="notes_sidebar">
@@ -14,13 +18,10 @@ export default class NotesView {
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            <a class="nav-link" href="#">重要</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled">Disabled</a>
+            <a class="nav-link" href="#">不重要</a>
           </li>
           <li class="nav-item">
             <button class="btn btn-success notes_Add" type="button">
@@ -70,12 +71,17 @@ export default class NotesView {
               ${body.substring(0, MAX_BODY_LENGTH)}
               ${body.length > MAX_BODY_LENGTH ? "..." : ""}
           </p>
+          <i class="bi bi-trash3"></i>
           <div class="card_updated">
               ${updated.toLocaleString(undefined, {
                 dateStyle: "full",
                 timeStyle: "short",
               })}
           </div>
+          <select class="form-select w-25 selectorBox" aria-label="Default select example">
+            <option value="1">重要</option>
+            <option value="2">不重要</option>
+          </select>
       </div>
   </div>
   `;
@@ -97,19 +103,13 @@ export default class NotesView {
       NotesListContainer.insertAdjacentHTML("beforeend", html);
     }
 
-    // NotesListContainer.querySelector(".card")
-    //   .querySelectorAll(".card-body")
-    //   .forEach((NoteListItem) => {
-    //     NoteListItem.addEventListener("click", () => {
-    //       // console.log(NoteListItem.parentElement.getAttribute("data-note-id"));
-    //       // console.log(NoteListItem.parentElement.dataset.noteId);
-    //       this.onNoteSelect(NoteListItem.parentElement.dataset.noteId);
-    //     });
-    //   });
-
+    // let saveID;
     NotesListContainer.querySelectorAll(".card").forEach((NoteListItem) => {
       NoteListItem.addEventListener("click", () => {
+        // console.log(NoteListItem.dataset.noteId);
+        // console.log(NoteListItem);
         this.onNoteSelect(NoteListItem.dataset.noteId);
+        // saveID = NoteListItem.dataset.noteId;
       });
     });
   }
@@ -123,6 +123,14 @@ export default class NotesView {
     this.root.querySelectorAll(".card").forEach((NoteListItem) => {
       // console.log(NoteListItem);
       NoteListItem.classList.remove("card--selected");
+      NoteListItem.querySelector(".card-body")
+        .querySelectorAll(".bi")
+        .forEach((btn) => {
+          btn.addEventListener("click", () => {
+            // console.log(NoteListItem.dataset.noteId);
+            this.onNoteDelete(NoteListItem.dataset.noteId);
+          });
+        });
     });
 
     this.root

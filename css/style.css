@@ -70,3 +70,14 @@ body {
   border-radius: 7px;
   font-weight: bold;
 }
+
+.bi {
+  position: relative;
+  top: 22px;
+}
+
+.selectorBox {
+  position: absolute;
+  left: 40px;
+  bottom: 11.5px;
+}

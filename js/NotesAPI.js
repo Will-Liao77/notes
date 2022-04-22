@@ -26,4 +26,18 @@ export default class NotesAPI {
   }
 
   // delete
+  // reference :https://stackoverflow.com/questions/48433435/how-to-delete-an-item-in-list-json-localstorage
+  static deleteNote(noteToDelete) {
+    const notes = NotesAPI.getAllNotes();
+    const existing = notes.find((note) => note.id == noteToDelete);
+
+    if (existing) {
+      const index = notes.indexOf(existing);
+      console.log(index);
+      notes.splice(index, 1);
+      localStorage.setItem("NotesApp-notes", JSON.stringify(notes));
+    } else {
+      return;
+    }
+  }
 }
