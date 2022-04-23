@@ -227,7 +227,8 @@ export default class NotesView {
             // console.log("done");
             select.parentElement.parentElement.classList.remove("todo");
             select.parentElement.parentElement.classList.remove("All");
-            select.parentElement.parentElement.classList.add("done");
+            select.parentElement.parentElement.classList.remove("done");
+            select.parentElement.parentElement.classList.add("delete");
             this.onStatusChange(3);
             break;
           default:
