@@ -28,6 +28,7 @@ export default class App {
     this.view.UpdateActiveNote(note);
   }
 
+  // status defaule: 0, processing: 1, done: 2, deleted: 3
   _handlers() {
     return {
       onNoteSelect: (noteId) => {
@@ -39,17 +40,36 @@ export default class App {
           title: "New Note",
           body: "Take Note...",
         };
-
         NotesAPI.saveNote(newNote);
         this._refreshNotes();
       },
       onNoteEdit: (title, body) => {
         NotesAPI.saveNote({
+          nowStatus: this.activeNote.nowStatus,
           id: this.activeNote.id,
           title,
           body,
         });
+        // console.log(this.activeNote.nowStatus);
         this._refreshNotes();
+      },
+      onStatusChange: (nowStatus) => {
+        NotesAPI.saveNote({
+          nowStatus,
+          id: this.activeNote.id,
+          title: this.activeNote.title,
+          body: this.activeNote.body,
+        });
+        // console.log(nowStatus);
+        this._refreshNotes();
+      },
+      onTabChange: (tabType) => {
+        // console.log("hi onTabChange");
+        const filterItems = NotesAPI.tabChange(tabType);
+        this._setNotes(filterItems);
+        if (filterItems.length > 0) {
+          this._setActiveNote(filterItems[0]);
+        }
       },
       onNoteDelete: (noteId) => {
         NotesAPI.deleteNote(noteId);

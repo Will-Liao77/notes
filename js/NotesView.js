@@ -1,13 +1,23 @@
 export default class NotesView {
   constructor(
     root,
-    { onNoteSelect, onNoteAdd, onNoteEdit, onNoteDelete } = {}
+    {
+      onNoteSelect,
+      onNoteAdd,
+      onNoteEdit,
+      onNoteDelete,
+      onStatusChange,
+      onTabChange,
+    } = {}
   ) {
     this.root = root;
     this.onNoteSelect = onNoteSelect;
     this.onNoteAdd = onNoteAdd;
     this.onNoteEdit = onNoteEdit;
     this.onNoteDelete = onNoteDelete;
+    this.onStatusChange = onStatusChange;
+    this.onTabChange = onTabChange;
+    // console.log(this.onTabChange);
 
     this.root.innerHTML = `
     <div class="notes_sidebar">
@@ -47,6 +57,7 @@ export default class NotesView {
     const in_Body = this.root.querySelector(".notes_body");
     const filters = this.root.querySelectorAll(".nav-item");
 
+    const NotesView = this;
     filters.forEach((tab) => {
       tab.addEventListener("click", function (e) {
         e.preventDefault();
@@ -55,8 +66,10 @@ export default class NotesView {
           nav.classList.remove("active");
         });
         this.firstElementChild.classList.add("active");
+        // console.log(this);
+        NotesView.onTabChange(tabType);
         // getItemsFilter(tabType);
-        document.querySelector("#tabValue").value = tabType;
+        // document.querySelector("#tabValue").value = tabType;
       });
     });
 
@@ -89,12 +102,12 @@ export default class NotesView {
 
     this.UpdateNotePreviewVisibility(false);
   }
-
-  _CreateListItemHTML(id, title, body, updated) {
+  // status defaule: 0, processing: 1, done: 2, deleted: 3
+  _CreateListItemHTML(nowStatus, id, title, body, updated) {
     const MAX_BODY_LENGTH = 60;
-
+    // option 加if 判斷式
     return `
-  <div class="card" style="width: 26rem" data-note-id="${id}">
+  <div class="card ${nowStatus}" style="width: 26rem" data-note-id="${id}">
       <div class="card-body">
           <h5 class="card-title">${title}</h5>
           <p class="card-text">
@@ -109,9 +122,38 @@ export default class NotesView {
               })}
           </div>
           <select class="form-select w-25 selectorBox">
-            <option selected>None</option>
-            <option value="todo">processing</option>
-            <option value="done">done</option>
+            <option value="All" ${
+              nowStatus == 0 &&
+              nowStatus != 1 &&
+              nowStatus != 2 &&
+              nowStatus != 3
+                ? "selected"
+                : "None"
+            }>All</option>
+            <option value="todo"${
+              nowStatus == 1 &&
+              nowStatus != 0 &&
+              nowStatus != 2 &&
+              nowStatus != 3
+                ? "selected"
+                : "None"
+            }>processing</option>
+            <option value="done"${
+              nowStatus == 2 &&
+              nowStatus != 0 &&
+              nowStatus != 1 &&
+              nowStatus != 3
+                ? "selected"
+                : "None"
+            }>done</option>
+            <option value="delete"${
+              nowStatus == 3 &&
+              nowStatus != 0 &&
+              nowStatus != 1 &&
+              nowStatus != 2
+                ? "selected"
+                : "None"
+            }>delete</option>
           </select>
       </div>
   </div>
@@ -125,6 +167,7 @@ export default class NotesView {
 
     for (const note of notes) {
       const html = this._CreateListItemHTML(
+        note.nowStatus,
         note.id,
         note.title,
         note.body,
@@ -149,33 +192,54 @@ export default class NotesView {
     this.root.querySelector(".notes_title").value = note.title;
     this.root.querySelector(".notes_body").value = note.body;
 
+    // selectBox.value = "done";
+    // console.log(note.title);
+    // console.log(this.root.querySelectorAll(".card_list"));
     this.root.querySelectorAll(".form-select").forEach((select) => {
       select.addEventListener("change", () => {
         // console.log(select.parentElement.parentElement);
         switch (select.value) {
+          case "All":
+            select.parentElement.parentElement.classList.remove("todo");
+            select.parentElement.parentElement.classList.remove("done");
+            select.parentElement.parentElement.classList.remove("delete");
+            select.parentElement.parentElement.classList.add("All");
+            this.onStatusChange(0);
+            break;
           case "todo":
             // console.log("processing");
             select.parentElement.parentElement.classList.remove("done");
-            select.parentElement.parentElement.classList.remove("none");
+            select.parentElement.parentElement.classList.remove("All");
+            select.parentElement.parentElement.classList.remove("delete");
             select.parentElement.parentElement.classList.add("todo");
+            this.onStatusChange(1);
             break;
           case "done":
             // console.log("done");
             select.parentElement.parentElement.classList.remove("todo");
-            select.parentElement.parentElement.classList.remove("none");
+            select.parentElement.parentElement.classList.remove("All");
+            select.parentElement.parentElement.classList.remove("delete");
+            select.parentElement.parentElement.classList.remove("done");
             select.parentElement.parentElement.classList.add("done");
+            this.onStatusChange(2);
+            break;
+          case "delete":
+            // console.log("done");
+            select.parentElement.parentElement.classList.remove("todo");
+            select.parentElement.parentElement.classList.remove("All");
+            select.parentElement.parentElement.classList.add("done");
+            this.onStatusChange(3);
             break;
           default:
             select.parentElement.parentElement.classList.remove("todo");
             select.parentElement.parentElement.classList.remove("done");
+            select.parentElement.parentElement.classList.remove("delete");
+            select.parentElement.parentElement.classList.add("All");
+            this.onStatusChange(0);
             break;
         }
       });
     });
-
-    // selectBox.value = "done";
-    // console.log(note.title);
-    // console.log(this.root.querySelectorAll(".card_list"));
 
     this.root.querySelectorAll(".card").forEach((NoteListItem) => {
       // console.log(NoteListItem);
