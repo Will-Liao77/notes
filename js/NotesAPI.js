@@ -24,7 +24,6 @@ export default class NotesAPI {
       NoteToSave.updated = new Date().toISOString();
       notes.push(NoteToSave);
     }
-
     localStorage.setItem("NotesApp-notes", JSON.stringify(notes));
   }
 
@@ -32,19 +31,11 @@ export default class NotesAPI {
     const notes = NotesAPI.getAllNotes();
     let filterItems = [];
     switch (tab) {
-      // case "all":
-      //   filterItems = notes.filter((item) => {
-      //     if (
-      //       item.nowStatus == 0 &&
-      //       item.nowStatus != 1 &&
-      //       item.nowStatus != 2
-      //     ) {
-      //       return true;
-      //     } else {
-      //       return false;
-      //     }
-      //   });
-      //   break;
+      case "all":
+        filterItems = notes.filter((item) => {
+          return true;
+        });
+        break;
       case "todo":
         filterItems = notes.filter((item) => {
           if (
@@ -101,6 +92,7 @@ export default class NotesAPI {
   static deleteNote(noteToDelete) {
     const notes = NotesAPI.getAllNotes();
     const existing = notes.find((note) => note.id == noteToDelete);
+    let filterDeleteItems = [];
 
     if (existing && existing.nowStatus == 3) {
       const index = notes.indexOf(existing);
@@ -108,7 +100,21 @@ export default class NotesAPI {
       notes.splice(index, 1);
       localStorage.setItem("NotesApp-notes", JSON.stringify(notes));
     } else {
+      existing.title = existing.title;
+      existing.body = existing.body;
       existing.nowStatus = 3;
+      existing.updated = new Date().toISOString();
+      localStorage.setItem("NotesApp-notes", JSON.stringify(notes));
     }
+
+    filterDeleteItems = notes.filter((deleteItem) => {
+      if (deleteItem.nowStatus == 3 || deleteItem.nowStatus == 0) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+    // console.log(filterDeleteItems);
+    return filterDeleteItems;
   }
 }

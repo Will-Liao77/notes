@@ -23,7 +23,7 @@ export default class NotesView {
     <div class="notes_sidebar">
         <ul class="nav nav-pills">
           <li class="nav-item" data-type="all">
-            <a class="nav-link active "href="#">All notes</a>
+            <a class="nav-link active " id="firstNavItem" href="#">All notes</a>
           </li>
           <li class="nav-item" data-type="todo">
             <a class="nav-link" href="#">on the way</a>
@@ -73,21 +73,7 @@ export default class NotesView {
       });
     });
 
-    // const getItemsFilter = function (type) {
-    //   let filtersItems = [];
-    //   switch (type) {
-    //     case "todo":
-    //       // filtersItems =
-    //       break;
-    //     case "done":
-    //       break;
-    //     case "delete":
-    //       break;
-    //     default:
-    //       break;
-    //   }
-    // };
-
+    const firstNav = this.root.querySelector("#firstNavItem");
     btn_AddNote.addEventListener("click", () => {
       this.onNoteAdd();
     });
@@ -177,7 +163,6 @@ export default class NotesView {
       NotesListContainer.insertAdjacentHTML("beforeend", html);
     }
 
-    // let saveID;
     NotesListContainer.querySelectorAll(".card").forEach((NoteListItem) => {
       NoteListItem.addEventListener("click", () => {
         // console.log(NoteListItem.dataset.noteId);
@@ -196,15 +181,18 @@ export default class NotesView {
     // console.log(note.title);
     // console.log(this.root.querySelectorAll(".card_list"));
     this.root.querySelectorAll(".form-select").forEach((select) => {
+      // const preValue = select.value;
       select.addEventListener("change", () => {
-        // console.log(select.parentElement.parentElement);
+        // console.log(select.parentElement.parentElement.dataset.noteId);
         switch (select.value) {
           case "All":
             select.parentElement.parentElement.classList.remove("todo");
             select.parentElement.parentElement.classList.remove("done");
             select.parentElement.parentElement.classList.remove("delete");
             select.parentElement.parentElement.classList.add("All");
+            // console.log(preValue);
             this.onStatusChange(0);
+            // console.log(select.parentElement.parentElement.dataset.noteId);
             break;
           case "todo":
             // console.log("processing");
@@ -212,7 +200,9 @@ export default class NotesView {
             select.parentElement.parentElement.classList.remove("All");
             select.parentElement.parentElement.classList.remove("delete");
             select.parentElement.parentElement.classList.add("todo");
+            // console.log(preValue);
             this.onStatusChange(1);
+            // console.log(select.parentElement.parentElement.dataset.noteId);
             break;
           case "done":
             // console.log("done");
@@ -221,7 +211,9 @@ export default class NotesView {
             select.parentElement.parentElement.classList.remove("delete");
             select.parentElement.parentElement.classList.remove("done");
             select.parentElement.parentElement.classList.add("done");
+            // console.log(preValue);
             this.onStatusChange(2);
+            // console.log(select.parentElement.parentElement.dataset.noteId);
             break;
           case "delete":
             // console.log("done");
@@ -229,7 +221,9 @@ export default class NotesView {
             select.parentElement.parentElement.classList.remove("All");
             select.parentElement.parentElement.classList.remove("done");
             select.parentElement.parentElement.classList.add("delete");
+            // console.log(preValue);
             this.onStatusChange(3);
+            // console.log(select.parentElement.parentElement.dataset.noteId);
             break;
           default:
             select.parentElement.parentElement.classList.remove("todo");

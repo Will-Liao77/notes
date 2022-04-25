@@ -17,6 +17,13 @@ export default class App {
     }
   }
 
+  _refreshStatus(filters) {
+    this._setNotes(filters);
+    if (filters.length > 0) {
+      this._setActiveNote(filters[0]);
+    }
+  }
+
   _setNotes(notes) {
     this.notes = notes;
     this.view.UpdateNoteList(notes);
@@ -66,14 +73,11 @@ export default class App {
       onTabChange: (tabType) => {
         // console.log("hi onTabChange");
         const filterItems = NotesAPI.tabChange(tabType);
-        this._setNotes(filterItems);
-        if (filterItems.length > 0) {
-          this._setActiveNote(filterItems[0]);
-        }
+        this._refreshStatus(filterItems);
       },
       onNoteDelete: (noteId) => {
-        NotesAPI.deleteNote(noteId);
-        this._refreshNotes();
+        const deleteItems = NotesAPI.deleteNote(noteId);
+        this._refreshStatus(deleteItems);
         this._handlers();
       },
     };
