@@ -7,6 +7,7 @@ export default class App {
     this.activeNote = null;
     this.view = new NotesView(root, this._handlers());
     this._refreshNotes();
+    // console.log("1");
   }
 
   _refreshNotes() {
@@ -15,6 +16,9 @@ export default class App {
     if (notes.length > 0) {
       this._setActiveNote(notes[0]);
     }
+    document
+      .querySelector(".nav-link.active")
+      .parentElement.dispatchEvent(new Event("click"));
   }
 
   _refreshStatus(filters) {
@@ -60,6 +64,11 @@ export default class App {
         // console.log(this.activeNote.nowStatus);
         this._refreshNotes();
       },
+      onTabChange: (tabType) => {
+        // console.log("hi onTabChange");
+        const filterItems = NotesAPI.tabChange(tabType);
+        this._refreshStatus(filterItems);
+      },
       onStatusChange: (nowStatus) => {
         NotesAPI.saveNote({
           nowStatus,
@@ -67,18 +76,18 @@ export default class App {
           title: this.activeNote.title,
           body: this.activeNote.body,
         });
-        // console.log(nowStatus);
+        // NotesAPI.tabChange(
+        //   document.querySelector(".nav-link.active").parentElement.dataset.type
+        // );
+
         this._refreshNotes();
       },
-      onTabChange: (tabType) => {
-        // console.log("hi onTabChange");
-        const filterItems = NotesAPI.tabChange(tabType);
-        this._refreshStatus(filterItems);
-      },
+
       onNoteDelete: (noteId) => {
         const deleteItems = NotesAPI.deleteNote(noteId);
-        this._refreshStatus(deleteItems);
-        this._handlers();
+        this._refreshNotes();
+        // this._refreshStatus(deleteItems);
+        // this._handlers();
       },
     };
   }

@@ -108,7 +108,7 @@ export default class NotesAPI {
     }
 
     filterDeleteItems = notes.filter((deleteItem) => {
-      if (deleteItem.nowStatus == 3 || deleteItem.nowStatus == 0) {
+      if (deleteItem.nowStatus == 3) {
         return false;
       } else {
         return true;

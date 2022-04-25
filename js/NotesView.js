@@ -73,9 +73,14 @@ export default class NotesView {
       });
     });
 
-    const firstNav = this.root.querySelector("#firstNavItem");
     btn_AddNote.addEventListener("click", () => {
       this.onNoteAdd();
+      // document.querySelector(".nav-item").dispatchEvent(new Event("click"));
+      setTimeout(() => {
+        btn_AddNote.classList.remove("active");
+        document.querySelector(".nav-link").classList.add("active");
+      }, 100);
+      // console.log(document.querySelector(".nav-item"));
     });
 
     [in_Title, in_Body].forEach((inputField) => {
@@ -166,87 +171,50 @@ export default class NotesView {
     NotesListContainer.querySelectorAll(".card").forEach((NoteListItem) => {
       NoteListItem.addEventListener("click", () => {
         // console.log(NoteListItem.dataset.noteId);
-        // console.log(NoteListItem);
         this.onNoteSelect(NoteListItem.dataset.noteId);
         // saveID = NoteListItem.dataset.noteId;
       });
     });
-  }
-
-  UpdateActiveNote(note) {
-    this.root.querySelector(".notes_title").value = note.title;
-    this.root.querySelector(".notes_body").value = note.body;
-
-    // selectBox.value = "done";
-    // console.log(note.title);
-    // console.log(this.root.querySelectorAll(".card_list"));
     this.root.querySelectorAll(".form-select").forEach((select) => {
-      // const preValue = select.value;
       select.addEventListener("change", () => {
-        // console.log(select.parentElement.parentElement.dataset.noteId);
         switch (select.value) {
           case "All":
-            select.parentElement.parentElement.classList.remove("todo");
-            select.parentElement.parentElement.classList.remove("done");
-            select.parentElement.parentElement.classList.remove("delete");
-            select.parentElement.parentElement.classList.add("All");
-            // console.log(preValue);
             this.onStatusChange(0);
-            // console.log(select.parentElement.parentElement.dataset.noteId);
             break;
           case "todo":
-            // console.log("processing");
-            select.parentElement.parentElement.classList.remove("done");
-            select.parentElement.parentElement.classList.remove("All");
-            select.parentElement.parentElement.classList.remove("delete");
-            select.parentElement.parentElement.classList.add("todo");
-            // console.log(preValue);
             this.onStatusChange(1);
-            // console.log(select.parentElement.parentElement.dataset.noteId);
             break;
           case "done":
-            // console.log("done");
-            select.parentElement.parentElement.classList.remove("todo");
-            select.parentElement.parentElement.classList.remove("All");
-            select.parentElement.parentElement.classList.remove("delete");
-            select.parentElement.parentElement.classList.remove("done");
-            select.parentElement.parentElement.classList.add("done");
-            // console.log(preValue);
             this.onStatusChange(2);
-            // console.log(select.parentElement.parentElement.dataset.noteId);
             break;
           case "delete":
-            // console.log("done");
-            select.parentElement.parentElement.classList.remove("todo");
-            select.parentElement.parentElement.classList.remove("All");
-            select.parentElement.parentElement.classList.remove("done");
-            select.parentElement.parentElement.classList.add("delete");
-            // console.log(preValue);
             this.onStatusChange(3);
-            // console.log(select.parentElement.parentElement.dataset.noteId);
             break;
           default:
-            select.parentElement.parentElement.classList.remove("todo");
-            select.parentElement.parentElement.classList.remove("done");
-            select.parentElement.parentElement.classList.remove("delete");
-            select.parentElement.parentElement.classList.add("All");
             this.onStatusChange(0);
             break;
         }
       });
     });
 
+    this.root.querySelectorAll(".bi").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        // console.log(NoteListItem.dataset.noteId);
+        this.onNoteDelete(btn.parentElement.parentElement.dataset.noteId);
+      });
+    });
+  }
+
+  UpdateActiveNote(note) {
+    if (note == undefined) {
+      note = { title: "", body: "" };
+    }
+    this.root.querySelector(".notes_title").value = note.title;
+    this.root.querySelector(".notes_body").value = note.body;
+
     this.root.querySelectorAll(".card").forEach((NoteListItem) => {
       // console.log(NoteListItem);
       NoteListItem.classList.remove("card--selected");
-      NoteListItem.querySelector(".card-body")
-        .querySelectorAll(".bi")
-        .forEach((btn) => {
-          btn.addEventListener("click", () => {
-            // console.log(NoteListItem.dataset.noteId);
-            this.onNoteDelete(NoteListItem.dataset.noteId);
-          });
-        });
     });
 
     this.root
